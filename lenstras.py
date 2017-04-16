@@ -5,8 +5,8 @@ from random import randrange
 import sys, os
 import threading
 
-def factor_thread(mod):
-	for j in range(100):
+def factor_thread(mod,r):
+	for j in range(r):
 		A = randrange(mod)
 		a = randrange(mod)
 		b = randrange(mod)
@@ -37,10 +37,11 @@ def factor_thread(mod):
 def main():
 	mod = int(sys.argv[1])
 	threads = []
-	for i in range(50):
-		t = threading.Thread(target=factor_thread, args=(mod,))
+        r = mod / 5**len(str(mod))
+	for i in range(500):
+		t = threading.Thread(target=factor_thread, args=(mod,r,))
 		threads.append(t)
-		t.setDaemon(True)
+#		t.setDaemon(True)
 		t.start()
 
 if __name__ == '__main__':
