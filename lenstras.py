@@ -12,14 +12,14 @@ def factor_thread(mod,r):
 		b = randrange(mod)
 		B = (b**2 - a**3 - A*a) % mod
 	
-		c = EC(A, B)
-		p = P(c, a, b, mod)
+		c = EC(A, B, mod)
+		p = P(c, a, b)
 		
 		break_flag = False
 	
 		fact = 1
 	
-		for i in range(2,50):
+		for i in range(2,100):
 			try:
 				fact *= i
 				h = fact*p
@@ -36,9 +36,10 @@ def factor_thread(mod,r):
 
 def main():
 	mod = int(sys.argv[1])
+	t_count = int(sys.argv[2])
 	threads = []
         r = mod / 5**len(str(mod))
-	for i in range(500):
+	for i in range(t_count):
 		t = threading.Thread(target=factor_thread, args=(mod,r,))
 		threads.append(t)
 #		t.setDaemon(True)

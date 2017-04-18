@@ -3,13 +3,13 @@ from gmpy2 import gcd
 
 #some ideas from here: https://jeremykun.com/2014/02/24/elliptic-curves-as-python-objects/
 class Point(object):
-	def __init__(self, curve, x, y, mod):
+	def __init__(self, curve, x, y):
 		self.x = x
 		self.y = y
 		self.curve = curve
-		self.mod = mod		
+		self.mod = curve.mod		
 
-		if not curve.testPoint(x, y, mod):
+		if not curve.testPoint(x, y):
 			raise Exception("Point %s not on given curve %s" % (self, curve))
 
 	def __str__(self):
@@ -42,7 +42,7 @@ class Point(object):
 		x3 = (powmod(lambda1,2,self.mod) - x1 - x2) % self.mod
 		y3 = (lambda1*(x1 - x3) - y1) % self.mod
 
-		return Point(self.curve, x3, y3, self.mod)
+		return Point(self.curve, x3, y3)
 
 	def __sub__(self, Q):
 		return self + -Q
@@ -92,16 +92,17 @@ class Ideal(Point):
 		return self
 
 class EllipticCurve(object):
-	def __init__(self, a, b):
+	def __init__(self, a, b, mod):
 		self.a = a
 		self.b = b
+		self.mod = mod
 	
 		self.discrimant = -16 * (4*pow(a,3) + 27*pow(b,2))
 		if self.discrimant == 0:
 			raise Exception("Non smooth curve.")
 
-	def testPoint(self, x, y, m):
-		return ((powmod(y,2,m) % m) == (powmod(x,3,m) + self.a*x + self.b) % m)
+	def testPoint(self, x, y):
+		return ((powmod(y,2,self.mod) % self.mod) == (powmod(x,3,self.mod) + self.a*x + self.b) % self.mod)
 	
 	def __str__(self):
 		return "y^2 = x^3 + %Gx + %G" % (self.a, self.b)
